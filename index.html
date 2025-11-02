@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>NetMuitenai</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- アプリケーションの全体コンテナ -->
+    <div id="app-root">
+
+        <!-- 1. タイトル画面 -->
+        <div id="title-screen" class="app-screen">
+            <h1 id="main-title">Tower Diffence</h1>
+            <button id="start-button">次へ</button>
+        </div>
+
+        <!-- 2. 説明画面 (TDゲームの説明) -->
+        <div id="explanation-screen" class="app-screen hidden">
+            <h2>コマの説明</h2>
+            <div id="tower-descriptions">
+                <!-- JSでここに追加されます -->
+            </div>
+            <button id="td-start-button">ゲームスタート</button>
+        </div>
+
+        <!-- 3. TDゲーム本体 -->
+        <div id="td-game-area" class="app-screen hidden">
+            
+            <div id="info-panel">
+                <div id="gold-display">ゴールド: <span>150G</span></div>
+                <div id="wave-info">ウェーブ: <span id="current-wave-display">0</span> / 10</div>
+                <div id="life-display">ライフ: <span>10</span></div>
+            </div>
+            
+            <div id="message-area">
+                <span id="gold-message" class="hidden"></span>
+            </div>
+
+            <div id="game-area">
+                <div id="enemy-container"></div>
+                <div id="key-ui" class="hidden">🔑 脱出のカギ！</div> 
+            </div>
+        </div>
+
+        <!-- 4. ゲーム終了画面 -->
+        <div id="end-screen" class="hidden">
+            <h2 id="end-message">GAME OVER</h2>
+            <p id="end-score">最終ゴールド: 0G</p>
+            <button id="restart-button">リトライ！</button>
+        </div>
+
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+/* --- ベースレイアウト --- */
+body {
+    background-color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#app-root {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #555;
+}
+
+.app-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #555; /* 灰色背景 */
+    z-index: 1000;
+}
+.hidden { display: none !important; }
+
+/* --- 1. タイトル画面 (title-screen) --- */
+#main-title {
+    font-size: 50px;
+    padding: 20px 40px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(135deg, #FFD700, #FF4500); /* 黄色から赤のグラデーション */
+    border: 3px solid #FF4500;
+}
+#start-button {
+    padding: 15px 50px;
+    font-size: 24px;
+    border-radius: 30px;
+    background-color: #FF4500; /* 赤背景 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #CC3800;
+    transition: all 0.1s;
+}
+#start-button:active {
+    transform: translateY(5px);
+    box-shadow: none;
+}
+
+/* --- 2. 説明画面 (explanation-screen) --- */
+#explanation-screen {
+    background-color: #555;
+    color: white;
+    padding: 20px;
+    justify-content: space-around;
+}
+#explanation-screen h2 {
+    font-size: 30px;
+    color: #FFD700;
+}
+#tower-descriptions {
+    width: 90%;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+}
+.tower-desc-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dotted #888;
+    padding-bottom: 10px;
+}
+.tower-desc-item h3 {
+    margin: 0;
+    font-size: 18px;
+    width: 100px;
+}
+.tower-desc-item p {
+    margin: 0 0 0 10px;
+    font-size: 14px;
+    flex-grow: 1;
+}
+#td-start-button {
+    padding: 15px 50px;
+    font-size: 24px;
+    border-radius: 30px;
+    background-color: #4CAF50; /* 緑背景 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #388E3C;
+    transition: all 0.1s;
+}
+#td-start-button:active {
+    transform: translateY(5px);
+    box-shadow: none;
+}
+
+/* --- 3. TDゲーム本体 (td-game-area) --- */
+#td-game-area {
+    /* #app-rootで管理されるため flex-direction: column; に変更 */
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background-color: #555;
+    flex-direction: column; 
+    justify-content: flex-start; /* 上部にUIを集める */
+    padding: 0;
+}
+
+/* ゲームエリア */
+#game-area {
+    width: 800px;
+    height: 600px;
+    background-color: #555; 
+    position: relative;
+    overflow: hidden; 
+}
+
+/* 情報パネルのスタイル */
+#info-panel {
+    width: 800px;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    background-color: #333;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 100;
+    position: absolute; /* TDエリアの上にオーバーレイ */
+    top: 0;
+}
+#info-panel span {
+    color: yellow;
+    margin-left: 5px;
+}
+#wave-info {
+    font-size: 18px;
+    color: #4CAF50;
+    padding: 5px;
+}
+#key-ui {
+    font-size: 24px;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 0 0 5px black;
+    margin-top: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 400;
+}
+
+/* --- マップ関連 --- */
+
+/* 敵の道（黒線）: 50px下にシフト済み */
+#game-area::before {
+    content: '';
+    position: absolute;
+    left: 125px;
+    top: 125px;
+    width: 550px;
+    height: 450px;
+    background: #333;
+    z-index: 1;
+}
+#game-area::after {
+    content: '';
+    position: absolute;
+    left: 175px;
+    top: 175px;
+    width: 450px;
+    height: 350px;
+    background: #555;
+    z-index: 2;
+}
+
+/* コマの配置マス（緑） */
+.tower-tile {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    border: 1px solid #0f0;
+    cursor: pointer;
+    z-index: 3;
+}
+.tower-tile:hover {
+    background-color: lightgreen;
+}
+
+/* 敵（赤）とゴール（黄） */
+#spawn-point {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    z-index: 3;
+}
+#goal-point {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: yellow;
+    z-index: 3;
+}
+
+/* --- 敵/タワー/弾のスタイル --- */
+
+/* 敵のスタイル */
+.enemy {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.enemy-text {
+    position: absolute;
+    top: -20px;
+    font-size: 10px;
+    color: white;
+    white-space: nowrap;
+}
+
+/* 弾のスタイル */
+.bullet {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    z-index: 15;
+}
+
+/* ダメージテキスト */
+.damage-text {
+    position: absolute;
+    color: yellow;
+    font-size: 14px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 20;
+    animation: fade-up 1s ease-out forwards;
+}
+@keyframes fade-up {
+    0% { transform: translateY(0px); opacity: 1; }
+    100% { transform: translateY(-30px); opacity: 0; }
+}
+
+/* タワーの見た目（コマのマスに設置される） */
+.tower {
+    border-radius: 5px;
+    border: 2px solid #fff;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.tower-level {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    font-weight: bold;
+    color: yellow;
+    text-shadow: 1px 1px 1px black;
+}
+
+/* タワー設置ポップアップのスタイル */
+#tower-popup {
+    position: absolute;
+    display: none;
+    background-color: #111;
+    border: 3px solid #ccc;
+    padding: 10px;
+    z-index: 500;
+    font-size: 14px;
+    color: white;
+}
+#tower-popup button {
+    display: block;
+    margin: 5px 0;
+    padding: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* ゴールド不足などのメッセージ表示エリア */
+#message-area {
+    width: 800px;
+    height: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 200;
+}
+#gold-message {
+    font-size: 30px;
+    color: red;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.hidden { opacity: 0; display: none !important; } 
+.visible { opacity: 1; display: block; }
+
+
+/* --- ゲーム終了画面 (ポップアップ) --- */
+#end-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px; 
+    height: 600px;
+    background-color: rgba(0, 0, 0, 0.95);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+    text-align: center;
+    border-radius: 5px;
+}
+#end-screen.hidden {
+    display: none;
+}
+#end-message {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+#restart-button {
+    padding: 15px 30px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    box-shadow: 0 4px 0 #388E3C;
+    transition: background-color 0.1s;
+}
+#restart-button:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
