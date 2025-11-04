@@ -8,7 +8,7 @@ const waypoints = [
     { x: 650, y: 550 }  // [3] ゴール (500 + 50)
 ];
 
-// コマの配置マス (10個): ユーザー調整後の最新データ (バランス調整)
+// コマの配置マス (10個): ユーザー調整後の最新データ
 const towerTiles = [
     // 左の列 (2個)
     { x: 50, y: 350 }, { x: 50, y: 250 },
@@ -54,12 +54,12 @@ const A_NAMES = [
 ]; // 合計13個
 
 const B_NAMES = [
-    'べたべたえのき', '法政大学', '爆美女でーす', '社不',
-    '借金42万'
+    'べたべたえのき', '大学', '爆美女でーす', '社不',
+    '修理費10万'
 ]; // 合計5個
 
 const C_NAMES = [
-    'インスタのID→yrk___416', '大網白里市'
+    'インスタのIDは', '住んでる市は'
 ]; // 合計2個
 const NAME_COUNTERS = { A: 0, B: 0, C: 0 };
 
@@ -90,12 +90,14 @@ function fibonacci(n) {
 }
 
 function calculateUpgradeCost(currentLevel) {
+    // レベル L から L+1 へのアップグレードコストは F(L+1) * 10
     const nextLevel = currentLevel + 1;
     const fibNum = fibonacci(nextLevel); 
     return fibNum * 10; 
 }
 
 function calculateUpgradeRate(currentLevel) {
+    // n=currentLevel から n=currentLevel+1 への上昇率を計算
     const n = currentLevel;
     return (2.5 * n * n + 2.5 * n) / 100; // 0.05, 0.15, 0.30... (小数点)
 }
@@ -116,10 +118,9 @@ class Enemy {
         this.name = nameArray[nameIndex % nameArray.length]; 
         NAME_COUNTERS[type] = (nameIndex + 1);
 
-        // ★★★ 修正箇所: 敵のHP上昇を +50 から +100 に倍増！ ★★★
+        // HP上昇を +50 から +100 に修正
         const hpBonus = (currentWave - 1) * 100; 
         this.hp = this.stats.hp + hpBonus;
-        // ★★★ ----------------------------------------- ★★★
 
         this.el = document.createElement('div');
         this.el.className = 'enemy';
@@ -215,8 +216,6 @@ class Tower {
         this.updateVisuals(); 
     }
     
-    // Tower クラス内の upgrade メソッドを修正
-
     upgrade() {
         const cost = calculateUpgradeCost(this.level); 
         const baseRate = calculateUpgradeRate(this.level); // 基本の上昇率 (例: 0.05)
@@ -229,32 +228,33 @@ class Tower {
         currentGold -= cost;
         updateUI();
 
-        // 攻撃スピードの上昇率 (他のステータスより15%低い)
-        // 攻撃スピードの上昇率に1.1を掛けて、底上げする (君の要望)
+        // 攻撃力・射程の上昇率を 70% に抑える
+        const powerRangeRate = baseRate * 0.7; 
+        
+        // 攻撃スピードの上昇率 (他のステータスより15%低い) を 1.1倍で底上げ
         const speedRate = baseRate * 0.85 * 1.1; 
 
-        // ログ追加: アップグレード前の速度
-        console.log(`Lv${this.level} -> Lv${this.level + 1} | Rate: ${(baseRate * 100).toFixed(1)}%`);
-        console.log(`[PRE-UPGRADE] Speed: ${this.stats.speed.toFixed(3)}`);
-
-        // ★★★ 最終修正: 値を増やすことで速度アップ (1 + rate) ★★★
-        this.stats.power *= (1 + baseRate);
-        this.stats.range *= (1 + baseRate);
-        this.stats.speed *= (1 + speedRate); // ★★★ 速度の値が大きくなるように修正 ★★★
+        // ★★★ 速度の値が増えることで速度アップ (1 + rate) ★★★
+        this.stats.power *= (1 + powerRangeRate);
+        this.stats.range *= (1 + powerRangeRate);
+        this.stats.speed *= (1 + speedRate); 
 
         this.level++;
         this.updateVisuals();
-        
-        // ログ追加: アップグレード後の速度
-        console.log(`[POST-UPGRADE] Speed: ${this.stats.speed.toFixed(3)}`);
         
         showMessage(`${this.stats.name}がレベル${this.level}にアップグレード！`);
         
         showTowerMenu(this.tileEl, this);
         return true;
     }
+    
     updateVisuals() {
-        this.tileEl.querySelector('.tower').innerHTML = `<span class="tower-level">Lv.${this.level}</span>`;
+        // コマがまだ設置されていない場合にエラーを防ぐ
+        const towerEl = this.tileEl.querySelector('.tower');
+        if (towerEl) {
+            towerEl.innerHTML = `<span class="tower-level">Lv.${this.level}</span>`;
+        }
+        
         this.rangeEl.style.width = this.stats.range * 2 + 'px';
         this.rangeEl.style.height = this.stats.range * 2 + 'px';
         this.rangeEl.style.left = this.centerX - this.stats.range + 'px';
@@ -439,6 +439,14 @@ function drawMap() {
     `;
     document.head.appendChild(styleEl);
     updateUI();
+    
+    // ★★★ 修正箇所: ポップアップコンテナを drawMap で生成し、#game-areaを親にする ★★★
+    if (!document.getElementById('tower-popup')) {
+        const popup = document.createElement('div');
+        popup.id = 'tower-popup';
+        gameArea.appendChild(popup);
+    }
+    // ★★★ ------------------------------------------------------------------ ★★★
 }
 
 function showMessage(text, duration = 1500) {
@@ -595,8 +603,8 @@ function gameLoop(timestamp) {
 // ★★★ 新規追加: メニュー表示ヘルパー関数 ★★★
 function showTowerMenu(tile, existingTower) {
     const popup = document.getElementById('tower-popup');
-    popup.style.left = parseInt(tile.style.left) + 'px'; // マスの左位置
-    popup.style.top = parseInt(tile.style.top) + 'px';   // マスの上位置
+    popup.style.left = tile.style.left;
+    popup.style.top = tile.style.top;
     popup.style.display = 'block';
     
     // ポップアップを閉じるためのイベントリスナーを再設定
@@ -731,7 +739,7 @@ function showGameClearScreen() {
     
     document.getElementById('restart-button').textContent = "脱出ゲームの続きへ";
     document.getElementById('restart-button').onclick = () => {
-        document.getElementById('app-container').style.display = 'none'; 
+        document.getElementById('app-root').style.display = 'none'; // #app-root全体を非表示
         document.getElementById('end-screen').classList.add('hidden'); 
         startEscapeGame();
     };
@@ -765,12 +773,21 @@ function resetGame() {
     
     document.getElementById('end-screen').classList.add('hidden');
     document.getElementById('key-ui').classList.add('hidden');
+    
+    // TDゲームエリア内のすべての要素を削除し、マップを再描画
+    if (gameArea) {
+        const popup = document.getElementById('tower-popup');
+        if (popup) popup.remove(); // ポップアップを一度削除
+        gameArea.innerHTML = '<div id="enemy-container"></div>'; 
+        drawMap();
+    }
 }
 
-// script.js の startGame() 関数を修正
-
 function startGame() {
-    // UIの表示/非表示のロジックは initTDGame() に移動済み
+    // #td-game-areaを表示し、他の画面を隠す
+    document.getElementById('title-screen').classList.add('hidden');
+    document.getElementById('explanation-screen').classList.add('hidden');
+    document.getElementById('td-game-area').classList.remove('hidden');
     
     resetGame();
     startWaves();
@@ -780,30 +797,29 @@ function startGame() {
 }
 
 function startEscapeGame() {
+    // ★★★ 次のステップ: 脱出ゲームのロジックがここに入る ★★★
+    document.body.style.backgroundColor = '#222'; // 背景色を戻す
+    document.getElementById('app-root').style.display = 'flex'; // app-rootを表示に戻す
+    document.getElementById('app-root').innerHTML = `
+        <div id="escape-room-1" class="app-screen">
+            <h1>部屋1：カギを手に入れた！</h1>
+            <p>ドアを開けよう。カギを使いますか？</p>
+            <button onclick="alert('脱出成功！誕生日おめでとう！')">カギを使う</button>
+            <button onclick="alert('まだ脱出は早い！')">調べる</button>
+        </div>
+    `;
     console.log("TDクリア！脱出ゲームの次のステップへ移行します。");
-    // 次のステップで、この中に脱出ゲームのロジックを入れる！
 }
 
 
 // --- 7. DOMContentLoaded ---
 
-// script.js の DOMContentLoaded 内を修正
-
 document.addEventListener('DOMContentLoaded', () => {
-    // 最初にポップアップのコンテナを生成 (Tower設置のために必要)
-    const popup = document.createElement('div');
-    popup.id = 'tower-popup';
-
-    document.getElementById('td-game-area').appendChild(popup);
-    
-    // app-root の後に配置する必要があるため、bodyに追加
-    document.body.appendChild(popup); 
-
-    // ★★★ TDゲームの初期化とイベント設定を initTDGame に集約 ★★★
+    // TDゲームの初期化とイベント設定を initTDGame に集約
     initTDGame(); 
 });
 
-// script.js のどこかに追加 (TDゲームの初期設定)
+// TDゲームの初期設定
 function initTDGame() {
     // TDゲーム本体の各種IDを取得
     const titleScreen = document.getElementById('title-screen');
@@ -813,7 +829,7 @@ function initTDGame() {
     const tdStartButton = document.getElementById('td-start-button');
     const towerDescriptions = document.getElementById('tower-descriptions');
 
-    // ★★★ 修正箇所1: イベントリスナーの設定 ★★★
+    // イベントリスナーの設定
     startButton.onclick = () => {
         titleScreen.classList.add('hidden');
         explanationScreen.classList.remove('hidden');
@@ -822,8 +838,6 @@ function initTDGame() {
     
     tdStartButton.onclick = () => {
         explanationScreen.classList.add('hidden');
-        tdGameArea.classList.remove('hidden');
-        
         // TDゲーム本体の開始
         startGame(); 
     };
@@ -836,8 +850,8 @@ function initTDGame() {
     
     // TDゲーム関連のDOM要素の取得 (マップ描画に必要)
     gameArea = document.getElementById('game-area');
-    drawMap();
-    
+    drawMap(); // マップを描画すると同時に #tower-popup が #game-area に追加される
+
     // コマの配置イベントをTDゲームエリアで設定
     document.querySelectorAll('.tower-tile').forEach(tile => {
         tile.onclick = (e) => {
@@ -847,7 +861,7 @@ function initTDGame() {
     });
 }
 
-// コマの説明を生成する関数 (新規追加)
+// コマの説明を生成する関数
 function setupDescriptions(container) {
     container.innerHTML = ''; // コンテナをクリア
     Object.values(TOWER_STATS).forEach(stats => {
@@ -855,11 +869,12 @@ function setupDescriptions(container) {
         item.className = 'tower-desc-item';
         item.innerHTML = `
             <h3 style="color:${stats.color};">${stats.name}</h3>
-            <p>攻撃力: ${stats.power} / 射程: ${stats.range} / 攻撃速度: ${stats.speed}回/秒</p>
+            <p>
+                コスト: ${stats.cost}G / 攻撃力: ${stats.power.toFixed(0)} / 射程: ${stats.range.toFixed(0)} / 攻撃速度: ${stats.speed.toFixed(1)}回/秒
+                <br>
+                Lvアップ時: 攻/射 ${Math.round(calculateUpgradeRate(1) * 100)}%↑ / 速 ${Math.round(calculateUpgradeRate(1) * 100 * 0.85 * 1.1)}%↑
+            </p>
         `;
         container.appendChild(item);
     });
 }
-// -----------------------------------------------------------
-// ★★★ 既存の startGame() 関数は、TDゲーム開始のロジックのみに集約してください ★★★
-// -----------------------------------------------------------
