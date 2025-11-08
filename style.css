@@ -6,22 +6,28 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    font-family: sans-serif; /* 基本フォントを指定 */
 }
 
 #app-root {
     position: relative;
     width: 800px;
-    height: 600px;
-    display: flex;
+    height: 600px; /* ゲームエリアと同じサイズにする */
+    display: flex; /* 中身（各画面）を中央に配置 */
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* 中央揃え */
     border: 2px solid #fff;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     background-color: #555;
+    overflow: hidden; /* はみ出した要素を隠す */
 }
 
+/* 全ての画面（タイトル、説明、TDゲーム）の共通設定 */
 .app-screen {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
@@ -29,9 +35,16 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #555; /* 灰色背景 */
-    z-index: 1000;
+    z-index: 1000; /* デフォルトで最前面に */
+    transition: opacity 0.3s ease-out; /* 切り替えアニメーション */
 }
-.hidden { display: none !important; }
+/* .hiddenクラスで画面を非表示にする */
+.app-screen.hidden { 
+    opacity: 0;
+    pointer-events: none; /* クリックできなくする */
+    z-index: -1;
+}
+
 
 /* --- 1. タイトル画面 (title-screen) --- */
 #main-title {
@@ -111,14 +124,10 @@ body {
 
 /* --- 3. TDゲーム本体 (td-game-area) --- */
 #td-game-area {
-    /* #app-rootで管理されるため flex-direction: column; に変更 */
-    position: relative;
     width: 800px;
     height: 600px;
     background-color: #555;
-    flex-direction: column; 
-    justify-content: flex-start; /* 上部にUIを集める */
-    padding: 0;
+    /* 他の .app-screen と共通の flex 設定 */
 }
 
 /* ゲームエリア */
@@ -323,11 +332,11 @@ body {
     opacity: 0;
     transition: opacity 0.5s;
 }
-.hidden { opacity: 0; display: none !important; } 
-.visible { opacity: 1; display: block; }
+/* .hidden は .app-screen で定義済み */
+#gold-message.visible { opacity: 1; } /* visibleを追加 */
 
 
-/* --- ゲーム終了画面 (ポップアップ) --- */
+/* --- ゲーム終了画面 (ポップアップ) ---*/
 #end-screen {
     position: absolute;
     top: 0;
@@ -340,12 +349,12 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 500;
+    z-index: 1002; /* 500から変更 */
     text-align: center;
-    border-radius: 5px;
+    /* .hidden クラスで管理 */
 }
 #end-screen.hidden {
-    display: none;
+    display: none !important; /* 確実に隠す */
 }
 #end-message {
     font-size: 48px;
@@ -366,4 +375,44 @@ body {
 #restart-button:active {
     transform: translateY(4px);
     box-shadow: none;
+}
+
+/* --- ウェーブ開始ポップアップ --- */
+#wave-popup {
+    position: absolute;
+    top: 40%; 
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8); 
+    font-size: 60px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    z-index: 500; /* 他のUIより手前に */
+    opacity: 0;
+    pointer-events: none; /* クリックを透過させる */
+    transition: opacity 0.3s ease-out;
+}
+/* .hidden クラスで管理 */
+#wave-popup.show {
+    animation: fade-in-out 2.5s ease-in-out forwards;
+    opacity: 0; /* アニメーション開始時の状態 */
+}
+
+@keyframes fade-in-out {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
 }
