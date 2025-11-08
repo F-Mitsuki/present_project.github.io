@@ -321,7 +321,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    z-index: 200;
+    z-index: 501
+    ;
 }
 #gold-message {
     font-size: 30px;
@@ -387,7 +388,7 @@ body {
     font-weight: bold;
     color: white;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-    z-index: 500; /* 他のUIより手前に */
+    z-index: 501; /* 他のUIより手前に */
     opacity: 0;
     pointer-events: none; /* クリックを透過させる */
     transition: opacity 0.3s ease-out;
@@ -416,3 +417,4 @@ body {
         transform: translate(-50%, -50%) scale(1.3);
     }
 }
+
