@@ -9,7 +9,19 @@
 
     <!-- アプリケーションの全体コンテナ -->
     <div id="app-root">
-
+        <div id="countdown-screen" class="app-screen">
+            <!-- ユーザー提供の背景 -->
+            <div class="starry_sky"></div>
+            <div class="constellation"></div>
+            
+            <!-- カウントダウンのコンテンツ (星空より手前に表示) -->
+            <div id="countdown-content">
+                <div id="countdown-timer">
+                    <!-- JSがここに残り時間を挿入 -->
+                </div>
+                <button id="goto-title-button">ゲームへ</button>
+            </div>
+        </div>
         <!-- 1. タイトル画面 -->
         <div id="title-screen" class="app-screen">
             <h1 id="main-title">Tower Diffence</h1>
@@ -57,3 +69,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
