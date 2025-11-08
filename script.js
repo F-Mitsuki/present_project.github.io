@@ -1069,7 +1069,11 @@ function initTDGame() {
     // TDゲーム関連のDOM要素の取得
     gameArea = document.getElementById('game-area');
     if (!gameArea) return; // gameAreaがなければ何もしない
-    
+    document.getElementById('countdown-screen').classList.remove('hidden');
+    document.getElementById('title-screen').classList.add('hidden');
+    document.getElementById('explanation-screen').classList.add('hidden');
+    document.getElementById('td-game-area').classList.add('hidden');
+    document.getElementById('end-screen').classList.add('hidden');
     drawMap(); // マップとポップアップコンテナを描画
 
     // イベント委任を gameArea に設定
