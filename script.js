@@ -871,7 +871,7 @@ function startGame() {
 }
 
 function startEscapeGame() {
-    console.log("ゲームクリア！次のステップへ");
+    console.log("ゲームクリア！次へ");
 
     // TDゲームエリアと終了画面を隠す
     document.getElementById('td-game-area').classList.add('hidden'); 
@@ -1058,10 +1058,10 @@ function startCountdown() {
 
     function updateTimer() {
         const now = new Date();
-        const diff = targetDate - now;
+        const diff = 0//targetDate - now;
 
         if (diff <= 0) {
-            countdownElement.innerHTML = "🎉 誕生日おめでとう！ 🎉";
+            countdownElement.innerHTML = "誕生日おめでとう〜これで未成年飲酒じゃないね";
             if(timerInterval) clearInterval(timerInterval);
             return;
         }
