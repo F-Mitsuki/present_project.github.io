@@ -1106,8 +1106,8 @@ function setupDescriptions(container) {
         item.className = 'tower-desc-item';
         
         const upgradeRateLv1 = calculateUpgradeRate(1);
-        const powerRate = (upgradeRateLv1 * 0.7 * 100).toFixed(0);
-        const speedRate = (upgradeRateLv1 * 0.85 * 1.1 * 100).toFixed(0);
+        const powerRate = (upgradeRateLv1 * 0.6 * 100).toFixed(0);
+        const speedRate = (upgradeRateLv1 * 0.65 * 1.1 * 100).toFixed(0);
 
         item.innerHTML = `
             <h3 style="color:${stats.color};">${stats.name}</h3>
