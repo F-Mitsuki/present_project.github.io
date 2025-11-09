@@ -1053,12 +1053,13 @@ function startCountdown() {
     const countdownElement = document.getElementById('countdown-timer');
     if (!countdownElement) return;
     
-    const targetDate = new Date(2025, 10, 11, 0, 0, 0); // 2025年11月11日
+    //const targetDate = new Date(2025, 10, 11, 0, 0, 0); // 2025年11月11日
+    const targetDate = new Date(Date.now() - 1000);
     let timerInterval = null; 
 
     function updateTimer() {
         const now = new Date();
-        const diff = 0//targetDate - now;
+        const diff = targetDate - now;
 
         if (diff <= 0) {
             countdownElement.innerHTML = "誕生日おめでとう〜これで未成年飲酒じゃないね";
