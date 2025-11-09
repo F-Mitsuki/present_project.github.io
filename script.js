@@ -233,7 +233,7 @@ class Tower {
         const baseRate = calculateUpgradeRate(this.level); 
         
         if (currentGold < cost) {
-            showMessage(`レベルアップに${cost}G足りん。計算もできんの？`);
+            showMessage(`レベルアップに${cost}G足りん。計算もできんのん？`);
             return false;
         }
 
@@ -735,7 +735,7 @@ function placeTower(type, tileEl) {
     const stats = TOWER_STATS[type];
     
     if (currentGold < stats.cost) {
-        showMessage("お金が足りない。また借金する気か？");
+        showMessage("お金足りんなぁ。また借金する気？");
         return;
     }
 
@@ -786,11 +786,11 @@ function showGameClearScreen() {
     const keyUiEl = document.getElementById('key-ui');
     if (keyUiEl) keyUiEl.classList.remove('hidden');
     
-    endMessage.textContent = "ゲームクリア！脱出のカギを獲得！";
+    endMessage.textContent = "クリア〜脱出のカギを獲得！";
     endMessage.style.color = "gold"; 
     endScreen.classList.remove('hidden');
     
-    document.getElementById('restart-button').textContent = "脱出ゲームの続きへ";
+    document.getElementById('restart-button').textContent = "続きへ";
     document.getElementById('restart-button').onclick = () => {
         document.getElementById('td-game-area').classList.add('hidden'); 
         document.getElementById('end-screen').classList.add('hidden'); 
@@ -911,7 +911,7 @@ function startEscapeGame() {
     
     // 画面の内容を設定
     escapeRoomScreen.innerHTML = `
-        <h1 style="color: gold;">部屋1：カギを手に入れた！</h1>
+        <h1 style="color: gold;">カギを手に入れた！</h1>
         <p style="color: white;">カギを使いますか？</p>
         <button id="use-key-button" class="action-button">カギを使う</button>
         <button id="look-around-button" class="action-button">まだ調べる</button>
@@ -942,8 +942,8 @@ function startEscapeGame() {
     // 新しいボタンにイベントリスナーを設定
     document.getElementById('use-key-button').onclick = () => {
          escapeRoomScreen.innerHTML = `
-            <h1 style="color: #4CAF50; font-size: 40px; text-align: center;">脱出成功！<br>誕生日おめでとう~</h1>
-            <p style="color: white; font-size: 18px; padding: 0 20px; text-align: center;">次はどんな個人情報を教えてくれるの？</p>
+            <h1 style="color: #4CAF50; font-size: 40px; text-align: center;">脱出成功！<br>誕生日おめでとう〜</h1>
+            <p style="color: white; font-size: 18px; padding: 0 20px; text-align: center;">次はどんな個人情報を教えてくれるん？</p>
          `;
     };
     
@@ -1130,6 +1130,15 @@ function initTDGame() {
     const tdStartButton = document.getElementById('td-start-button');
     const towerDescriptions = document.getElementById('tower-descriptions');
 
+    const tutorialScreen = document.getElementById('tutorial-screen'); 
+    
+    // ボタン要素を取得
+    const gotoTitleButton = document.getElementById('goto-title-button');
+    const startButton = document.getElementById('start-button');
+    const tdStartButton = document.getElementById('td-start-button');
+    
+    //修正箇所:新しいボタンを追加
+    const tutorialStartButton = document.getElementById('tutorial-start-button'); 
     // イベントリスナーの設定
     startButton.onclick = () => {
         titleScreen.classList.add('hidden');
@@ -1139,12 +1148,19 @@ function initTDGame() {
     
     tdStartButton.onclick = () => {
         explanationScreen.classList.add('hidden');
+        tutorialScreen.classList.remove('hidden'); // 操作説明を表示
+    };
+    
+    tdStartButton.onclick = () => {
+        explanationScreen.classList.add('hidden');
         startGame(); 
     };
 
     // 最初にタイトル画面だけを表示
-    titleScreen.classList.remove('hidden');
+    countdownScreen.classList.remove('hidden');
+    titleScreen.classList.add('hidden');
     explanationScreen.classList.add('hidden');
+    tutorialScreen.classList.add('hidden');
     tdGameArea.classList.add('hidden');
     document.getElementById('end-screen').classList.add('hidden');
     
